@@ -1,0 +1,49 @@
+name: Check Fixture Freshness
+
+on:
+  schedule:
+    # 1st and 15th of each month at 06:00 UTC.
+    - cron: "0 6 1,15 * *"
+  workflow_dispatch:
+
+jobs:
+  check-fixtures:
+    name: Refresh CNA fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Refresh fixtures
+        run: pnpm fixtures:refresh
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain tests/fixtures/)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request if fixtures changed
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: refresh CNA fixture snapshots"
+          body: |
+            CNA output has changed since the last fixture refresh.
+
+            Review the diff carefully — unexpected changes typically indicate
+            upstream `create-next-app` behavior shifts worth investigating.
+          branch: chore/refresh-fixtures
+          commit-message: "chore: refresh CNA fixture snapshots"
+          add-paths: |
+            tests/fixtures/**

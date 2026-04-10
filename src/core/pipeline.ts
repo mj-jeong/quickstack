@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import pc from "picocolors";
 import { createNextApp } from "../adapters/next/create.js";
+import { buildCnaArgs } from "../adapters/next/options.js";
 import { writeDecisions } from "../generators/decisions.js";
 import { shouldGenerateEnv, writeEnvExample } from "../generators/env.js";
 import { appendGitignore } from "../generators/gitignore.js";
@@ -24,6 +25,7 @@ export interface PipelineAction {
 	description: string;
 	files?: string[];
 	commands?: string[];
+	packages?: string[];
 }
 
 async function runAdapter(ctx: ProjectContext): Promise<void> {
@@ -62,7 +64,21 @@ async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise
 			logger.warn(`Integration "${id}" not found in registry — skipping.`);
 			continue;
 		}
-		await integration.setup(ctx, projectDir);
+		try {
+			await integration.setup(ctx, projectDir);
+		} catch (err) {
+			// shadcn init is non-fatal: warn and continue.
+			if (id === "shadcn") {
+				logger.warn(
+					`shadcn init failed — continuing without it. You can retry manually: npx shadcn@latest init --defaults`,
+				);
+				if (err instanceof Error) {
+					logger.warn(`  reason: ${err.message}`);
+				}
+				continue;
+			}
+			throw new PipelineError(`Integration "${id}" setup failed`, { cause: err });
+		}
 	}
 }
 
@@ -111,67 +127,151 @@ async function runPostProcess(ctx: ProjectContext, projectDir: string): Promise<
 	await postProcess(ctx, projectDir);
 }
 
-function collectAdapterActions(ctx: ProjectContext): PipelineAction {
+// ── dry-run collection ──────────────────────────────────────────────────────
+
+function collectAdapterAction(ctx: ProjectContext): PipelineAction {
+	const args = buildCnaArgs(ctx);
 	return {
-		step: "adapter",
+		step: "create-next-app",
 		description: `Run create-next-app for "${ctx.projectName}"`,
-		commands: [`npx create-next-app@latest ${ctx.projectName} --ts --src-dir --app`],
+		commands: [`npx create-next-app@latest ${args.join(" ")}`],
 	};
 }
 
-function collectPresetActions(ctx: ProjectContext, _projectDir: string): PipelineAction {
+function collectPresetAction(ctx: ProjectContext): PipelineAction {
+	const preset = ctx.preset === "minimal" ? minimalPreset : recommendedPreset;
 	return {
-		step: "preset",
-		description: `Apply "${ctx.preset}" preset structure`,
-		files: [],
-		commands: [],
+		step: "apply-preset",
+		description: `Apply "${preset.name}" preset directory structure`,
+		files: preset.directories.map((d) => `${d}/`),
 	};
 }
 
-function collectIntegrationActions(ctx: ProjectContext, _projectDir: string): PipelineAction {
-	const libs = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm];
-	return {
-		step: "integrations",
-		description: `Install and configure: ${libs.length > 0 ? libs.join(", ") : "(none)"}`,
-		packages: libs,
-		commands: libs.length > 0 ? [`${ctx.packageManager} add ${libs.join(" ")}`] : [],
-	} as PipelineAction & { packages?: string[] };
+function collectIntegrationActions(ctx: ProjectContext): PipelineAction[] {
+	const selectedIds = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm] as string[];
+	if (selectedIds.length === 0) {
+		return [];
+	}
+
+	let orderedIds: string[];
+	try {
+		orderedIds = resolveExecutionOrder(selectedIds);
+	} catch {
+		// Fall back to input order when dependency resolution fails in dry-run.
+		orderedIds = selectedIds;
+	}
+
+	const actions: PipelineAction[] = [];
+	for (const id of orderedIds) {
+		const integration = getIntegration(id);
+		if (!integration) {
+			actions.push({
+				step: `integration:${id}`,
+				description: `Unknown integration "${id}" — would be skipped.`,
+			});
+			continue;
+		}
+
+		const commands: string[] = [];
+		if (integration.packages.length > 0) {
+			commands.push(`${ctx.packageManager} add ${integration.packages.join(" ")}`);
+		}
+		if (integration.devPackages && integration.devPackages.length > 0) {
+			commands.push(`${ctx.packageManager} add -D ${integration.devPackages.join(" ")}`);
+		}
+		if (id === "shadcn") {
+			commands.push("npx shadcn@latest init --defaults");
+		}
+
+		actions.push({
+			step: `integration:${id}`,
+			description: `Configure ${integration.name}`,
+			packages: integration.packages,
+			files: integration.modifies ?? [],
+			commands,
+		});
+	}
+	return actions;
 }
 
-function collectGeneratorActions(_ctx: ProjectContext, _projectDir: string): PipelineAction {
+function collectGeneratorAction(ctx: ProjectContext): PipelineAction {
+	const files = ["README.md", "DECISIONS.md", ".gitignore (append)"];
+	if (shouldGenerateEnv(ctx)) {
+		files.push(".env.example");
+	}
+	const preset = ctx.preset === "minimal" ? minimalPreset : recommendedPreset;
+	for (const dir of preset.directories) {
+		files.push(`${dir}/.gitkeep`);
+	}
 	return {
 		step: "generators",
-		description: "Generate README.md and DECISIONS.md",
-		files: ["README.md", "DECISIONS.md"],
+		description: "Generate docs, env, and structural files",
+		files,
 	};
 }
 
-export function collectDryRunActions(ctx: ProjectContext): PipelineAction[] {
-	const projectDir = join(process.cwd(), ctx.projectName);
-	return [
-		collectAdapterActions(ctx),
-		collectPresetActions(ctx, projectDir),
-		collectIntegrationActions(ctx, projectDir),
-		collectGeneratorActions(ctx, projectDir),
-	];
+function collectPostProcessAction(ctx: ProjectContext): PipelineAction {
+	const commands: string[] = [`cd ${ctx.projectName}`];
+	if (ctx.packageManager === "npm") {
+		commands.push("npm install", "npm run dev");
+	} else if (ctx.packageManager === "pnpm") {
+		commands.push("pnpm dev");
+	} else {
+		commands.push("yarn dev");
+	}
+	return {
+		step: "post-process",
+		description: "Print next-step instructions",
+		commands,
+	};
 }
+
+export async function collectDryRunActions(ctx: ProjectContext): Promise<PipelineAction[]> {
+	// Ensure integrations are registered so we can inspect packages/modifies.
+	await registerAllIntegrations();
+
+	const actions: PipelineAction[] = [];
+	actions.push(collectAdapterAction(ctx));
+	actions.push(collectPresetAction(ctx));
+	actions.push(...collectIntegrationActions(ctx));
+	actions.push(collectGeneratorAction(ctx));
+	actions.push(collectPostProcessAction(ctx));
+	return actions;
+}
+
+function printDryRunPlan(actions: PipelineAction[]): void {
+	console.log("");
+	console.log(pc.bold(pc.cyan("── DRY-RUN PLAN ──")));
+	console.log(pc.dim("No files will be written, no commands will be executed."));
+	console.log("");
+
+	for (const action of actions) {
+		console.log(
+			`${pc.bold(pc.yellow("▸"))} ${pc.bold(action.step)}  ${pc.dim(action.description)}`,
+		);
+		if (action.commands && action.commands.length > 0) {
+			for (const cmd of action.commands) {
+				console.log(`    ${pc.green("$")} ${cmd}`);
+			}
+		}
+		if (action.packages && action.packages.length > 0) {
+			console.log(`    ${pc.cyan("packages")}: ${action.packages.join(", ")}`);
+		}
+		if (action.files && action.files.length > 0) {
+			for (const file of action.files) {
+				console.log(`    ${pc.magenta("+")} ${file}`);
+			}
+		}
+		console.log("");
+	}
+}
+
+// ── main entry ──────────────────────────────────────────────────────────────
 
 export async function runPipeline(ctx: ProjectContext, projectDir?: string): Promise<void> {
 	if (ctx.dryRun) {
-		const actions = collectDryRunActions(ctx);
-		for (const action of actions) {
-			console.log(`\n[dry-run] ${action.step}: ${action.description}`);
-			if (action.commands && action.commands.length > 0) {
-				for (const cmd of action.commands) {
-					console.log(`  $ ${cmd}`);
-				}
-			}
-			if (action.files && action.files.length > 0) {
-				for (const file of action.files) {
-					console.log(`  + ${file}`);
-				}
-			}
-		}
+		const actions = await collectDryRunActions(ctx);
+		printDryRunPlan(actions);
 		return;
 	}
 
@@ -181,6 +281,9 @@ export async function runPipeline(ctx: ProjectContext, projectDir?: string): Pro
 		try {
 			await runAdapter(ctx);
 		} catch (err) {
+			if (err instanceof PipelineError) {
+				throw err;
+			}
 			throw new PipelineError("Adapter step failed", { cause: err });
 		}
 	}
@@ -194,6 +297,9 @@ export async function runPipeline(ctx: ProjectContext, projectDir?: string): Pro
 	try {
 		await runIntegrations(ctx, dir);
 	} catch (err) {
+		if (err instanceof PipelineError) {
+			throw err;
+		}
 		throw new PipelineError("Integrations step failed", { cause: err });
 	}
 
