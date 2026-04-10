@@ -1,4 +1,15 @@
 import { join } from "node:path";
+import { createNextApp } from "../adapters/next/create.js";
+import { registerAllIntegrations } from "../integrations/index.js";
+import {
+	detectConflicts,
+	getIntegration,
+	resolveExecutionOrder,
+} from "../integrations/registry.js";
+import { minimalPreset } from "../presets/next/minimal.js";
+import { recommendedPreset } from "../presets/next/recommended.js";
+import { ensureDir } from "../utils/fs.js";
+import { logger } from "../utils/logger.js";
 import type { ProjectContext } from "./context.js";
 import { PipelineError } from "./errors.js";
 
@@ -9,17 +20,44 @@ export interface PipelineAction {
 	commands?: string[];
 }
 
-// Placeholder functions for phases 3-5
-async function runAdapter(_ctx: ProjectContext): Promise<void> {
-	// Implemented in Phase 3 (adapters/next/create.ts)
+async function runAdapter(ctx: ProjectContext): Promise<void> {
+	await createNextApp(ctx);
 }
 
-async function runPreset(_ctx: ProjectContext, _projectDir: string): Promise<void> {
-	// Implemented in Phase 4 (presets/next/)
+async function runPreset(ctx: ProjectContext, projectDir: string): Promise<void> {
+	const preset = ctx.preset === "minimal" ? minimalPreset : recommendedPreset;
+	for (const dir of preset.directories) {
+		await ensureDir(join(projectDir, dir));
+	}
 }
 
-async function runIntegrations(_ctx: ProjectContext, _projectDir: string): Promise<void> {
-	// Implemented in Phase 4 (integrations/)
+async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise<void> {
+	await registerAllIntegrations();
+
+	const selectedIds = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm] as string[];
+
+	if (selectedIds.length === 0) {
+		return;
+	}
+
+	// Warn about conflicts
+	const conflicts = detectConflicts(selectedIds);
+	for (const conflict of conflicts) {
+		logger.warn(
+			`File conflict detected: "${conflict.file}" is modified by multiple integrations: ${conflict.integrations.join(", ")}`,
+		);
+	}
+
+	const orderedIds = resolveExecutionOrder(selectedIds);
+
+	for (const id of orderedIds) {
+		const integration = getIntegration(id);
+		if (!integration) {
+			logger.warn(`Integration "${id}" not found in registry — skipping.`);
+			continue;
+		}
+		await integration.setup(ctx, projectDir);
+	}
 }
 
 async function runGenerators(_ctx: ProjectContext, _projectDir: string): Promise<void> {
