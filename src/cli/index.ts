@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
+import { registerCreateCommand } from "./commands/create.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "..", "..", "package.json"), "utf-8")) as {
@@ -16,6 +17,6 @@ program
 	.description("Next.js project setup CLI with preset-based scaffolding and library integration")
 	.version(pkg.version);
 
-// `create` subcommand is implemented in Phase 3.
+registerCreateCommand(program);
 
 program.parse();
