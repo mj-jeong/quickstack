@@ -1,5 +1,11 @@
 import { join } from "node:path";
+import pc from "picocolors";
 import { createNextApp } from "../adapters/next/create.js";
+import { writeDecisions } from "../generators/decisions.js";
+import { shouldGenerateEnv, writeEnvExample } from "../generators/env.js";
+import { appendGitignore } from "../generators/gitignore.js";
+import { writeReadme } from "../generators/readme.js";
+import { applyStructure } from "../generators/structure.js";
 import { registerAllIntegrations } from "../integrations/index.js";
 import {
 	detectConflicts,
@@ -60,12 +66,49 @@ async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise
 	}
 }
 
-async function runGenerators(_ctx: ProjectContext, _projectDir: string): Promise<void> {
-	// Implemented in Phase 5 (generators/)
+async function runGenerators(ctx: ProjectContext, projectDir: string): Promise<void> {
+	await applyStructure(ctx, projectDir);
+	await writeReadme(ctx, projectDir);
+	await writeDecisions(ctx, projectDir);
+	await appendGitignore(projectDir);
+	if (shouldGenerateEnv(ctx)) {
+		await writeEnvExample(ctx, projectDir);
+	}
 }
 
-async function runPostProcess(_ctx: ProjectContext, _projectDir: string): Promise<void> {
-	// Implemented in Phase 5 (post-processing)
+async function postProcess(ctx: ProjectContext, _projectDir: string): Promise<void> {
+	const { projectName, packageManager } = ctx;
+	const allLibs = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm];
+
+	console.log("");
+	console.log(pc.green(`✔ Project ${pc.bold(projectName)} created successfully!`));
+	console.log("");
+	console.log(pc.bold("Next steps:"));
+
+	console.log(`  ${pc.cyan(`cd ${projectName}`)}`);
+
+	if (packageManager === "npm") {
+		console.log(`  ${pc.cyan("npm install")}`);
+		console.log(`  ${pc.cyan("npm run dev")}`);
+	} else if (packageManager === "pnpm") {
+		console.log(`  ${pc.cyan("pnpm dev")}`);
+	} else {
+		console.log(`  ${pc.cyan("yarn dev")}`);
+	}
+
+	console.log("");
+
+	if (allLibs.length > 0) {
+		console.log(`Selected libraries: ${pc.yellow(allLibs.join(", "))}`);
+	} else {
+		console.log("No additional libraries selected.");
+	}
+
+	console.log("");
+}
+
+async function runPostProcess(ctx: ProjectContext, projectDir: string): Promise<void> {
+	await postProcess(ctx, projectDir);
 }
 
 function collectAdapterActions(ctx: ProjectContext): PipelineAction {
