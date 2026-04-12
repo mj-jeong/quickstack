@@ -8,3 +8,9 @@ coverage/
 
 # claude
 .claude/
+
+docs/
+/src/tasks/
+run-phases.py
+prompts/
+scripts/
