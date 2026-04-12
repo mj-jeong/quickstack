@@ -9,8 +9,10 @@ coverage/
 # claude
 .claude/
 
+# project docs & task definitions (not shipped)
 docs/
-/src/tasks/
-run-phases.py
-prompts/
+tasks/
 scripts/
+
+# requirement prompts (root only, NOT src/prompts/)
+/prompts/
