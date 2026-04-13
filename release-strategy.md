@@ -9,37 +9,25 @@
 
 | 항목 | 값 |
 |------|-----|
-| **Package name** | `create-qstack` |
+| **Package name** | `quick-stack-tool` |
 | **Binary** | `quickstack` |
-| **npm create 관례** | `npm create qstack` = `npx create-qstack` |
-
-- `@quickstack/cli` → org `quickstack` 점유로 불가
-- `quickstack-cli` → 다른 프로젝트가 점유
-- `create-qstack` → 사용 가능 ✅, `npm create` 관례 활용
 
 ---
 
 ## 2. 사용자 실행 방법
 
 ```bash
-# npm create 관례 (권장)
-npm create qstack
-
-# pnpm
-pnpm create qstack
-
-# yarn
-yarn create qstack
-
-# npx 직접
-npx create-qstack
+# 일회성 실행
+npx quick-stack-tool              # npm
+pnpm dlx quick-stack-tool         # pnpm
+yarn dlx quick-stack-tool         # yarn
 
 # dry-run
-npm create qstack -- --dry-run
+npx quick-stack-tool --dry-run
 
 # 전역 설치 후
-npm install -g create-qstack
-quickstack create
+npm install -g quick-stack-tool
+quickstack
 ```
 
 ---
@@ -50,9 +38,10 @@ quickstack create
 - [x] LICENSE 파일 (MIT)
 - [x] package.json 보완 (license, repository, homepage, keywords, publishConfig)
 - [x] publint 통과
+- [x] 실제 사용자 실행 경로 검증 (인자 없는 실행, --dry-run)
 - [ ] npm login
 - [ ] npm publish
-- [ ] 배포 확인: `npx create-qstack --version`
+- [ ] 배포 확인: `npx quick-stack-tool --version`
 
 ---
 
@@ -65,12 +54,12 @@ pnpm dlx publint
 pnpm test:unit
 pnpm test:integration
 
-# 2. 배포 (unscoped — access public 불필요, publishConfig에 설정됨)
+# 2. 배포
 npm publish
 
 # 3. 확인
-npm view create-qstack
-npx create-qstack --version
+npm view quick-stack-tool
+npx quick-stack-tool --version
 ```
 
 ---
