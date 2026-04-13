@@ -10,6 +10,7 @@ coverage/
 .claude/
 
 # project docs & task definitions (not shipped)
+# NOTE: if these get re-tracked, run: git rm -r --cached docs/ tasks/ scripts/ prompts/
 docs/
 tasks/
 scripts/
