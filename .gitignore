@@ -7,4 +7,12 @@ coverage/
 .DS_Store
 
 # claude
-.claude/*
+.claude/
+
+# project docs & task definitions (not shipped)
+docs/
+tasks/
+scripts/
+
+# requirement prompts (root only, NOT src/prompts/)
+/prompts/
