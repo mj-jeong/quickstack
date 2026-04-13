@@ -112,6 +112,10 @@ const STYLING_REASONS: Record<string, { source: Source; reason: string }> = {
 		source: "Community-common",
 		reason: "Accessible component library built on Radix UI; requires Tailwind CSS.",
 	},
+	"lucide-react": {
+		source: "Community-common",
+		reason: "Default icon library bundled with shadcn/ui; consistent and tree-shakeable.",
+	},
 	"framer-motion": {
 		source: "Community-common",
 		reason: "Declarative animation library well-suited for React projects.",
@@ -146,6 +150,24 @@ const STATE_FORM_REASONS: Record<string, { source: Source; reason: string }> = {
 		source: "Community-common",
 		reason: "Performant form handling with minimal re-renders and built-in validation.",
 	},
+};
+
+const AUTH_REASONS: Record<string, { source: Source; reason: string }> = {
+	"next-auth": {
+		source: "Community-common",
+		reason: "De-facto standard authentication library for Next.js with broad provider support.",
+	},
+};
+
+const DATABASE_REASONS: Record<string, { source: Source; reason: string }> = {
+	prisma: {
+		source: "Community-common",
+		reason: "Most widely adopted Node.js ORM with type-safe query builder and migrations.",
+	},
+	drizzle: {
+		source: "Community-common",
+		reason: "Lightweight TypeScript ORM with SQL-like API and zero runtime overhead.",
+	},
 	supabase: {
 		source: "Community-common",
 		reason: "Open-source backend-as-a-service providing auth, database, and storage.",
@@ -171,6 +193,20 @@ function buildLibraryEntries(ctx: ProjectContext): DecisionEntry[] {
 
 	for (const lib of ctx.stateForm) {
 		const info = STATE_FORM_REASONS[lib];
+		if (info) {
+			entries.push({ label: lib, ...info });
+		}
+	}
+
+	for (const lib of ctx.auth) {
+		const info = AUTH_REASONS[lib];
+		if (info) {
+			entries.push({ label: lib, ...info });
+		}
+	}
+
+	for (const lib of ctx.database) {
+		const info = DATABASE_REASONS[lib];
 		if (info) {
 			entries.push({ label: lib, ...info });
 		}

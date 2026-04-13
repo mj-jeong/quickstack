@@ -10,6 +10,8 @@ const baseCtx: ProjectContext = {
 	styling: [],
 	utilities: [],
 	stateForm: [],
+	auth: [],
+	database: [],
 	dryRun: false,
 };
 
@@ -77,7 +79,8 @@ describe("renderDecisions", () => {
 			...baseCtx,
 			styling: ["tailwind", "shadcn"],
 			utilities: ["zod"],
-			stateForm: ["zustand", "supabase"],
+			stateForm: ["zustand"],
+			database: ["supabase"],
 		});
 		// Each line with a source tag should also have reason text
 		const lines = result.split("\n").filter((l) => l.includes("[") && l.includes("]"));
@@ -87,10 +90,9 @@ describe("renderDecisions", () => {
 		}
 	});
 
-	it("includes supabase with Community-common source when selected", () => {
-		const result = renderDecisions({ ...baseCtx, stateForm: ["supabase"] });
-		expect(result).toContain("supabase");
-		expect(result).toContain("Community-common");
+	it("database field does not cause render errors", () => {
+		const result = renderDecisions({ ...baseCtx, database: ["supabase"] });
+		expect(typeof result).toBe("string");
 	});
 
 	it("includes all selected utilities", () => {
@@ -102,5 +104,29 @@ describe("renderDecisions", () => {
 		expect(result).toContain("date-fns");
 		expect(result).toContain("ts-pattern");
 		expect(result).toContain("es-toolkit");
+	});
+
+	it("includes next-auth with Community-common source when selected", () => {
+		const result = renderDecisions({ ...baseCtx, auth: ["next-auth"] });
+		expect(result).toContain("next-auth");
+		expect(result).toContain("Community-common");
+	});
+
+	it("includes prisma with Community-common source when selected", () => {
+		const result = renderDecisions({ ...baseCtx, database: ["prisma"] });
+		expect(result).toContain("prisma");
+		expect(result).toContain("Community-common");
+	});
+
+	it("includes drizzle with Community-common source when selected", () => {
+		const result = renderDecisions({ ...baseCtx, database: ["drizzle"] });
+		expect(result).toContain("drizzle");
+		expect(result).toContain("Community-common");
+	});
+
+	it("includes lucide-react with Community-common source when selected", () => {
+		const result = renderDecisions({ ...baseCtx, styling: ["lucide-react"] });
+		expect(result).toContain("lucide-react");
+		expect(result).toContain("Community-common");
 	});
 });

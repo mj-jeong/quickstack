@@ -3,7 +3,7 @@ import type { ProjectContext } from "../core/context.js";
 export interface Integration {
 	id: string;
 	name: string;
-	group: "styling" | "utilities" | "stateForm";
+	group: "styling" | "utilities" | "stateForm" | "auth" | "database";
 	requires?: string[];
 	modifies?: string[];
 	packages: string[];

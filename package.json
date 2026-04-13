@@ -2,6 +2,33 @@
 	"name": "@quickstack/cli",
 	"version": "0.1.0",
 	"description": "Next.js project setup CLI with preset-based scaffolding and library integration",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mj-jeong/quickstack.git"
+	},
+	"homepage": "https://github.com/mj-jeong/quickstack#readme",
+	"bugs": {
+		"url": "https://github.com/mj-jeong/quickstack/issues"
+	},
+	"keywords": [
+		"nextjs",
+		"cli",
+		"scaffold",
+		"preset",
+		"tailwind",
+		"shadcn",
+		"prisma",
+		"drizzle",
+		"nextauth",
+		"supabase",
+		"quickstack",
+		"create-next-app",
+		"boilerplate"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"type": "module",
 	"bin": {
 		"quickstack": "./dist/cli/index.js"

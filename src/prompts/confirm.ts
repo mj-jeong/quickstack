@@ -36,6 +36,16 @@ function buildSummaryLines(ctx: Partial<ProjectContext>): string[] {
 		`  State / Form    : ${stateForm.length === 0 ? pc.dim("(none)") : stateForm.map((l) => pc.green(l)).join(", ")}`,
 	);
 
+	const auth = ctx.auth ?? [];
+	lines.push(
+		`  Auth            : ${auth.length === 0 ? pc.dim("(none)") : auth.map((l) => pc.green(l)).join(", ")}`,
+	);
+
+	const database = ctx.database ?? [];
+	lines.push(
+		`  Database        : ${database.length === 0 ? pc.dim("(none)") : database.map((l) => pc.green(l)).join(", ")}`,
+	);
+
 	lines.push("");
 
 	return lines;

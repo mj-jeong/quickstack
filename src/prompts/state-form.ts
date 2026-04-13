@@ -1,14 +1,25 @@
 import { checkbox } from "@inquirer/prompts";
 
-export async function promptStateForm(): Promise<
-	Array<"zustand" | "react-hook-form" | "supabase">
-> {
-	return checkbox<"zustand" | "react-hook-form" | "supabase">({
-		message: "State / Form / Backend (space to select, enter to confirm):",
+const ALL_STATE_FORM = ["zustand", "react-hook-form"] as const;
+type StateFormLib = (typeof ALL_STATE_FORM)[number];
+
+export async function promptStateForm(preset?: string): Promise<StateFormLib[]> {
+	const defaultAll = preset === "recommended";
+	const results = await checkbox<StateFormLib | "__all__">({
+		message: "State / Form (space to select, enter to confirm):",
 		choices: [
+			{
+				name: "Recommended All  (zustand + react-hook-form)",
+				value: "__all__" as const,
+				checked: defaultAll,
+			},
 			{ name: "zustand", value: "zustand" },
 			{ name: "react-hook-form", value: "react-hook-form" },
-			{ name: "supabase  (optional backend integration)", value: "supabase" },
 		],
 	});
+
+	if (results.includes("__all__")) {
+		return [...ALL_STATE_FORM];
+	}
+	return results.filter((v): v is StateFormLib => v !== "__all__");
 }

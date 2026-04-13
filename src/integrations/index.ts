@@ -19,4 +19,8 @@ export async function registerAllIntegrations(): Promise<void> {
 	await import("./zustand/index.js");
 	await import("./react-hook-form/index.js");
 	await import("./supabase/index.js");
+	await import("./lucide-react/index.js");
+	await import("./next-auth/index.js");
+	await import("./prisma/index.js");
+	await import("./drizzle/index.js");
 }

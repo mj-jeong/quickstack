@@ -12,7 +12,7 @@ interface EnvEntry {
 function collectEnvEntries(ctx: ProjectContext): EnvEntry[] {
 	const entries: EnvEntry[] = [];
 
-	if (ctx.stateForm.includes("supabase")) {
+	if (ctx.database.includes("supabase")) {
 		entries.push(
 			{ comment: "Supabase", key: "NEXT_PUBLIC_SUPABASE_URL", placeholder: "your-supabase-url" },
 			{
@@ -25,8 +25,11 @@ function collectEnvEntries(ctx: ProjectContext): EnvEntry[] {
 	return entries;
 }
 
-export function shouldGenerateEnv(ctx: ProjectContext): boolean {
-	return ctx.stateForm.includes("supabase");
+// Each integration's setup() appends its own env variables to .env.example directly.
+// This generator is no longer responsible for writing .env.example to avoid duplication.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function shouldGenerateEnv(_ctx: ProjectContext): boolean {
+	return false;
 }
 
 export async function writeEnvExample(ctx: ProjectContext, projectDir: string): Promise<void> {

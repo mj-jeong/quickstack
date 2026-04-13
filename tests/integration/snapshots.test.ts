@@ -21,6 +21,8 @@ const minimalContext: ProjectContext = {
 	styling: [],
 	utilities: [],
 	stateForm: [],
+	auth: [],
+	database: [],
 	dryRun: false,
 };
 
@@ -31,7 +33,9 @@ const fullContext: ProjectContext = {
 	preset: "recommended",
 	styling: ["tailwind", "shadcn", "framer-motion"],
 	utilities: ["zod", "date-fns", "ts-pattern", "es-toolkit"],
-	stateForm: ["zustand", "react-hook-form", "supabase"],
+	stateForm: ["zustand", "react-hook-form"],
+	auth: [],
+	database: ["supabase"],
 	dryRun: false,
 };
 
