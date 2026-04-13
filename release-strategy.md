@@ -9,13 +9,13 @@
 
 | 항목 | 값 |
 |------|-----|
-| **Package name** | `create-quickstack` |
+| **Package name** | `create-qstack` |
 | **Binary** | `quickstack` |
-| **npm create 관례** | `npm create quickstack` = `npx create-quickstack` |
+| **npm create 관례** | `npm create qstack` = `npx create-qstack` |
 
 - `@quickstack/cli` → org `quickstack` 점유로 불가
 - `quickstack-cli` → 다른 프로젝트가 점유
-- `create-quickstack` → 사용 가능 ✅, `npm create` 관례 활용
+- `create-qstack` → 사용 가능 ✅, `npm create` 관례 활용
 
 ---
 
@@ -23,22 +23,22 @@
 
 ```bash
 # npm create 관례 (권장)
-npm create quickstack
+npm create qstack
 
 # pnpm
-pnpm create quickstack
+pnpm create qstack
 
 # yarn
-yarn create quickstack
+yarn create qstack
 
 # npx 직접
-npx create-quickstack
+npx create-qstack
 
 # dry-run
-npm create quickstack -- --dry-run
+npm create qstack -- --dry-run
 
 # 전역 설치 후
-npm install -g create-quickstack
+npm install -g create-qstack
 quickstack create
 ```
 
@@ -52,7 +52,7 @@ quickstack create
 - [x] publint 통과
 - [ ] npm login
 - [ ] npm publish
-- [ ] 배포 확인: `npx create-quickstack --version`
+- [ ] 배포 확인: `npx create-qstack --version`
 
 ---
 
@@ -69,8 +69,8 @@ pnpm test:integration
 npm publish
 
 # 3. 확인
-npm view create-quickstack
-npx create-quickstack --version
+npm view create-qstack
+npx create-qstack --version
 ```
 
 ---
