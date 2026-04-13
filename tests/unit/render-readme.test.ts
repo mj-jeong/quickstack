@@ -10,6 +10,8 @@ const baseCtx: ProjectContext = {
 	styling: [],
 	utilities: [],
 	stateForm: [],
+	auth: [],
+	database: [],
 	dryRun: false,
 };
 
@@ -70,5 +72,24 @@ describe("renderReadme", () => {
 	it("does not include install step for pnpm (already installed)", () => {
 		const result = renderReadme({ ...baseCtx, packageManager: "pnpm" });
 		expect(result).not.toContain("pnpm install");
+	});
+
+	it("includes Auth section when auth contains next-auth", () => {
+		const result = renderReadme({ ...baseCtx, auth: ["next-auth"] });
+		expect(result).toContain("### Auth");
+		expect(result).toContain("next-auth");
+	});
+
+	it("includes Database section when database contains prisma and supabase", () => {
+		const result = renderReadme({ ...baseCtx, database: ["prisma", "supabase"] });
+		expect(result).toContain("### Database");
+		expect(result).toContain("prisma");
+		expect(result).toContain("supabase");
+	});
+
+	it("does not include Auth or Database sections when both are empty", () => {
+		const result = renderReadme({ ...baseCtx, auth: [], database: [] });
+		expect(result).not.toContain("### Auth");
+		expect(result).not.toContain("### Database");
 	});
 });

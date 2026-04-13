@@ -25,8 +25,11 @@ function collectEnvEntries(ctx: ProjectContext): EnvEntry[] {
 	return entries;
 }
 
-export function shouldGenerateEnv(ctx: ProjectContext): boolean {
-	return ctx.database.includes("supabase");
+// Each integration's setup() appends its own env variables to .env.example directly.
+// This generator is no longer responsible for writing .env.example to avoid duplication.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function shouldGenerateEnv(_ctx: ProjectContext): boolean {
+	return false;
 }
 
 export async function writeEnvExample(ctx: ProjectContext, projectDir: string): Promise<void> {

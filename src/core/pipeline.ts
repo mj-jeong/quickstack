@@ -42,7 +42,13 @@ async function runPreset(ctx: ProjectContext, projectDir: string): Promise<void>
 async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise<void> {
 	await registerAllIntegrations();
 
-	const selectedIds = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm] as string[];
+	const selectedIds = [
+		...ctx.styling,
+		...ctx.utilities,
+		...ctx.stateForm,
+		...ctx.auth,
+		...ctx.database,
+	] as string[];
 
 	if (selectedIds.length === 0) {
 		return;
@@ -94,7 +100,13 @@ async function runGenerators(ctx: ProjectContext, projectDir: string): Promise<v
 
 async function postProcess(ctx: ProjectContext, _projectDir: string): Promise<void> {
 	const { projectName, packageManager } = ctx;
-	const allLibs = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm];
+	const allLibs = [
+		...ctx.styling,
+		...ctx.utilities,
+		...ctx.stateForm,
+		...ctx.auth,
+		...ctx.database,
+	];
 
 	console.log("");
 	console.log(pc.green(`✔ Project ${pc.bold(projectName)} created successfully!`));
@@ -148,7 +160,13 @@ function collectPresetAction(ctx: ProjectContext): PipelineAction {
 }
 
 function collectIntegrationActions(ctx: ProjectContext): PipelineAction[] {
-	const selectedIds = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm] as string[];
+	const selectedIds = [
+		...ctx.styling,
+		...ctx.utilities,
+		...ctx.stateForm,
+		...ctx.auth,
+		...ctx.database,
+	] as string[];
 	if (selectedIds.length === 0) {
 		return [];
 	}

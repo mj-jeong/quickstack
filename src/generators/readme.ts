@@ -36,7 +36,13 @@ function buildGettingStartedSection(ctx: ProjectContext): string {
 }
 
 function buildTechStackSection(ctx: ProjectContext): string {
-	const allLibs = [...ctx.styling, ...ctx.utilities, ...ctx.stateForm];
+	const allLibs = [
+		...ctx.styling,
+		...ctx.utilities,
+		...ctx.stateForm,
+		...ctx.auth,
+		...ctx.database,
+	];
 
 	const lines = ["## Tech Stack", ""];
 
@@ -64,6 +70,22 @@ function buildTechStackSection(ctx: ProjectContext): string {
 	if (ctx.stateForm.length > 0) {
 		lines.push("### State / Form / Backend");
 		for (const lib of ctx.stateForm) {
+			lines.push(`- ${lib}`);
+		}
+		lines.push("");
+	}
+
+	if (ctx.auth.length > 0) {
+		lines.push("### Auth");
+		for (const lib of ctx.auth) {
+			lines.push(`- ${lib}`);
+		}
+		lines.push("");
+	}
+
+	if (ctx.database.length > 0) {
+		lines.push("### Database");
+		for (const lib of ctx.database) {
 			lines.push(`- ${lib}`);
 		}
 		lines.push("");
