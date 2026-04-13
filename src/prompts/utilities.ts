@@ -3,13 +3,15 @@ import { checkbox } from "@inquirer/prompts";
 const ALL_UTILITIES = ["zod", "date-fns", "ts-pattern", "es-toolkit"] as const;
 type UtilityLib = (typeof ALL_UTILITIES)[number];
 
-export async function promptUtilities(): Promise<UtilityLib[]> {
+export async function promptUtilities(preset?: string): Promise<UtilityLib[]> {
+	const defaultAll = preset === "recommended";
 	const results = await checkbox<UtilityLib | "__all__">({
 		message: "Utilities (space to select, enter to confirm):",
 		choices: [
 			{
 				name: "Recommended All  (zod + date-fns + ts-pattern + es-toolkit)",
 				value: "__all__" as const,
+				checked: defaultAll,
 			},
 			{ name: "zod", value: "zod" },
 			{ name: "date-fns", value: "date-fns" },

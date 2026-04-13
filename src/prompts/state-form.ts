@@ -3,13 +3,15 @@ import { checkbox } from "@inquirer/prompts";
 const ALL_STATE_FORM = ["zustand", "react-hook-form"] as const;
 type StateFormLib = (typeof ALL_STATE_FORM)[number];
 
-export async function promptStateForm(): Promise<StateFormLib[]> {
+export async function promptStateForm(preset?: string): Promise<StateFormLib[]> {
+	const defaultAll = preset === "recommended";
 	const results = await checkbox<StateFormLib | "__all__">({
 		message: "State / Form (space to select, enter to confirm):",
 		choices: [
 			{
 				name: "Recommended All  (zustand + react-hook-form)",
 				value: "__all__" as const,
+				checked: defaultAll,
 			},
 			{ name: "zustand", value: "zustand" },
 			{ name: "react-hook-form", value: "react-hook-form" },

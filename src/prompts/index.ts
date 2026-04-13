@@ -46,11 +46,11 @@ export async function runPrompts(initialName?: string, dryRun?: boolean): Promis
 		const projectName = await promptProjectName(initialName);
 		const packageManager = await promptPackageManager();
 		const preset = await promptPreset();
-		const rawStyling = await promptStyling();
-		const utilities = await promptUtilities();
-		const rawStateForm = await promptStateForm();
-		const auth = await promptAuth();
-		const database = await promptDatabase();
+		const rawStyling = await promptStyling(preset);
+		const utilities = await promptUtilities(preset);
+		const rawStateForm = await promptStateForm(preset);
+		const auth = await promptAuth(preset);
+		const database = await promptDatabase(preset);
 
 		const resolved = resolveImplicitDeps({
 			styling: rawStyling,
