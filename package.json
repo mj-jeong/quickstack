@@ -1,5 +1,5 @@
 {
-	"name": "@quickstack/cli",
+	"name": "create-quickstack",
 	"version": "0.1.0",
 	"description": "Next.js project setup CLI with preset-based scaffolding and library integration",
 	"license": "MIT",
