@@ -805,7 +805,7 @@ jobs:
 
 ```jsonc
 {
-  "name": "create-qstack",
+  "name": "quick-stack-tool",
   "version": "0.1.0",
   "description": "Next.js project setup CLI with preset-based scaffolding and library integration",
   "type": "module",
@@ -865,7 +865,7 @@ jobs:
 | 1 | Node.js 최소 지원 버전 | **>=22.0.0** (권장 24 LTS) |
 | 2 | CNA의 ESLint 설정 | **유지** — 사용자 프로젝트는 CNA ESLint 존중, QuickStack 자체만 Biome |
 | 3 | shadcn init 방식 | **child process** (`npx shadcn@latest init --defaults`) |
-| 4 | npm 패키지 이름 | **`create-qstack`** (fallback: `quickstack-cli`) |
+| 4 | npm 패키지 이름 | **`quick-stack-tool`** (fallback: `quickstack-cli`) |
 | 5 | 바이너리 이름 | **`quickstack`** (`"bin": { "quickstack": ... }`) |
 | 6 | 릴리즈 전략 | **MVP: 수동** (`npm version` + `npm publish`), post-MVP: Changesets + OIDC |
 | 7 | Zod 스코프 | 프롬프트 검증: inquirer 내장, config/context 검증: Zod |
@@ -877,14 +877,14 @@ jobs:
 
 ### npm Publish 전략
 
-- npm 패키지명: `create-qstack` (unscoped)
-- `npm create qstack` 관례 활용 (`create-next-app`, `create-vite`와 동일)
+- npm 패키지명: `quick-stack-tool` (unscoped)
+- `npx quick-stack-tool`로 실행
 - 코드 내 바이너리명은 `quickstack`으로 유지한다.
 
 ```bash
-npm create qstack        # npm
-pnpm create qstack       # pnpm
-yarn create qstack       # yarn
+npx quick-stack-tool              # npm
+pnpm dlx quick-stack-tool         # pnpm
+yarn dlx quick-stack-tool         # yarn
 ```
 
 ### 아키텍처 제약 사항 (의도적 결정)
@@ -909,7 +909,7 @@ yarn create qstack       # yarn
 ┌──────────────────────────────────────────────────┐
 │  QuickStack MVP — Tech Stack (v3)                │
 ├──────────────┬───────────────────────────────────┤
-│ Package      │ create-qstack (bin: quickstack)  │
+│ Package      │ quick-stack-tool (bin: quickstack)  │
 │ Runtime      │ Node.js 24 LTS (min >=22.0.0)     │
 │ Language     │ TypeScript 5.8+, ESM only          │
 │ PM           │ pnpm 10+                           │

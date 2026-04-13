@@ -19,4 +19,9 @@ program
 
 registerCreateCommand(program);
 
+// `npm create qstack` 관례: 인자 없이 실행 시 create를 기본 동작으로
+if (process.argv.length <= 2) {
+	process.argv.push("create");
+}
+
 program.parse();
