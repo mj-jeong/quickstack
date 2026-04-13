@@ -61,9 +61,9 @@ describe("renderDecisions", () => {
 		expect(result).not.toContain("react-hook-form");
 	});
 
-	it("includes directory structure entries with QuickStack opinion for recommended preset", () => {
+	it("includes directory structure entries with QuickStackTool opinion for recommended preset", () => {
 		const result = renderDecisions({ ...baseCtx, preset: "recommended" });
-		expect(result).toContain("QuickStack opinion");
+		expect(result).toContain("QuickStackTool opinion");
 		expect(result).toContain("src/components");
 		expect(result).toContain("src/features");
 	});

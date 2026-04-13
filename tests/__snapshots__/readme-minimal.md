@@ -1,6 +1,6 @@
 # minimal-app
 
-> Created with [QuickStack](https://github.com/quickstack/quickstack) using the `minimal` preset.
+> Created with [QuickStackTool](https://github.com/mj-jeong/quick-stack-tool) using the `minimal` preset.
 
 ## Getting Started
 

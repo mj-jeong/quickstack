@@ -9,7 +9,7 @@ import { logger } from "../../utils/logger.js";
 export function registerCreateCommand(program: Command): void {
 	program
 		.command("create [project-name]")
-		.description("Create a new Next.js project with QuickStack scaffolding")
+		.description("Create a new Next.js project with QuickStackTool scaffolding")
 		.option("--dry-run", "Preview actions without making any changes")
 		.action(async (projectName: string | undefined, options: { dryRun?: boolean }) => {
 			try {

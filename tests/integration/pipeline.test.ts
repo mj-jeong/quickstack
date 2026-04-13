@@ -203,7 +203,7 @@ describe("pipeline integration (fixture-based)", () => {
 			const decisions = readFileSync(join(dir, "DECISIONS.md"), "utf-8");
 			expect(decisions).toContain("# Decisions");
 			expect(decisions).toContain("[Official default]");
-			expect(decisions).toContain("[QuickStack opinion]");
+			expect(decisions).toContain("[QuickStackTool opinion]");
 			expect(decisions).toContain("[Community-common]");
 			expect(decisions).toContain("zod");
 		},

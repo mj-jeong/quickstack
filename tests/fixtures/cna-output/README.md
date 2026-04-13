@@ -1,7 +1,7 @@
 # CNA Output Fixtures
 
 These directories are pristine outputs from `create-next-app@latest`,
-used by QuickStack integration tests to simulate CNA without hitting the
+used by QuickStackTool integration tests to simulate CNA without hitting the
 network or running package installation.
 
 Last refreshed: 2026-04-10T05:11:11.727Z

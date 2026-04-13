@@ -4,7 +4,7 @@ Next.js 프로젝트를 빠르게 시작하는 CLI 도구.
 
 공식 생성기(`create-next-app`) 위에서 선택형 프리셋과 실무 라이브러리 조합을 한 번에 적용합니다.
 
-## Why QuickStack?
+## Why QuickStackTool?
 
 새 프로젝트를 시작할 때마다 반복되는 문제들:
 
@@ -126,7 +126,7 @@ npx quick-stack-tool --dry-run
 QuickStack이 생성하는 프로젝트에는 다음 문서가 포함됩니다:
 
 - **README.md**: 프로젝트 개요, 실행 방법, 사용된 기술 스택
-- **DECISIONS.md**: 각 기술 선택의 출처와 이유 (Official / Community / QuickStack)
+- **DECISIONS.md**: 각 기술 선택의 출처와 이유 (Official / Community / QuickStackTool)
 
 ## Requirements
 

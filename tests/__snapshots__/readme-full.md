@@ -1,6 +1,6 @@
 # full-app
 
-> Created with [QuickStack](https://github.com/quickstack/quickstack) using the `recommended` preset.
+> Created with [QuickStackTool](https://github.com/mj-jeong/quick-stack-tool) using the `recommended` preset.
 
 ## Getting Started
 

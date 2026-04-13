@@ -124,7 +124,7 @@ export function renderReadme(ctx: ProjectContext): string {
 	const sections: string[] = [
 		`# ${ctx.projectName}`,
 		"",
-		`> Created with [QuickStack](https://github.com/quickstack/quickstack) using the \`${ctx.preset}\` preset.`,
+		`> Created with [QuickStackTool](https://github.com/mj-jeong/quick-stack-tool) using the \`${ctx.preset}\` preset.`,
 		"",
 		buildGettingStartedSection(ctx),
 		"",
