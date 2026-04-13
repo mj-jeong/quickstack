@@ -5,11 +5,11 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/mj-jeong/quickstack.git"
+		"url": "git+https://github.com/mj-jeong/quick-stack-tool.git"
 	},
-	"homepage": "https://github.com/mj-jeong/quickstack#readme",
+	"homepage": "https://github.com/mj-jeong/quick-stack-tool#readme",
 	"bugs": {
-		"url": "https://github.com/mj-jeong/quickstack/issues"
+		"url": "https://github.com/mj-jeong/quick-stack-tool/issues"
 	},
 	"keywords": [
 		"nextjs",

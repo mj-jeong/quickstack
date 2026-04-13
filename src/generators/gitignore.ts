@@ -23,6 +23,6 @@ export async function appendGitignore(projectDir: string): Promise<void> {
 		return;
 	}
 
-	const addition = `\n# QuickStack additions\n${toAdd.join("\n")}\n`;
+	const addition = `\n# QuickStackTool additions\n${toAdd.join("\n")}\n`;
 	await writeFile(gitignorePath, existing + addition);
 }
