@@ -22,7 +22,7 @@ export function createClient() {
 const supabaseIntegration: Integration = {
 	id: "supabase",
 	name: "Supabase",
-	group: "stateForm",
+	group: "database",
 	requires: [],
 	modifies: [".env.example", "src/lib/supabase/client.ts"],
 	packages: ["@supabase/supabase-js"],
