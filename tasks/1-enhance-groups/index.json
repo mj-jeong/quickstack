@@ -6,7 +6,7 @@
   "created_at": "2026-04-13T15:00:00+0900",
   "phases": [
     { "phase": 0, "name": "docs-update", "status": "completed" },
-    { "phase": 1, "name": "schema-types", "status": "pending" },
+    { "phase": 1, "name": "schema-types", "status": "completed" },
     { "phase": 2, "name": "prompts", "status": "pending" },
     { "phase": 3, "name": "integrations", "status": "pending" },
     { "phase": 4, "name": "pipeline-generators", "status": "pending" },

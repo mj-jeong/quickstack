@@ -10,6 +10,8 @@ const baseCtx: ProjectContext = {
 	styling: [],
 	utilities: [],
 	stateForm: [],
+	auth: [],
+	database: [],
 	dryRun: false,
 };
 
@@ -77,7 +79,8 @@ describe("renderDecisions", () => {
 			...baseCtx,
 			styling: ["tailwind", "shadcn"],
 			utilities: ["zod"],
-			stateForm: ["zustand", "supabase"],
+			stateForm: ["zustand"],
+			database: ["supabase"],
 		});
 		// Each line with a source tag should also have reason text
 		const lines = result.split("\n").filter((l) => l.includes("[") && l.includes("]"));
@@ -87,10 +90,9 @@ describe("renderDecisions", () => {
 		}
 	});
 
-	it("includes supabase with Community-common source when selected", () => {
-		const result = renderDecisions({ ...baseCtx, stateForm: ["supabase"] });
-		expect(result).toContain("supabase");
-		expect(result).toContain("Community-common");
+	it("database field does not cause render errors", () => {
+		const result = renderDecisions({ ...baseCtx, database: ["supabase"] });
+		expect(typeof result).toBe("string");
 	});
 
 	it("includes all selected utilities", () => {

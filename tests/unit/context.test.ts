@@ -9,6 +9,8 @@ const validMinimal = {
 	styling: [],
 	utilities: [],
 	stateForm: [],
+	auth: [],
+	database: [],
 };
 
 describe("ProjectContextSchema", () => {
@@ -25,7 +27,9 @@ describe("ProjectContextSchema", () => {
 			preset: "recommended",
 			styling: ["tailwind", "shadcn", "framer-motion"],
 			utilities: ["zod", "date-fns", "ts-pattern", "es-toolkit"],
-			stateForm: ["zustand", "react-hook-form", "supabase"],
+			stateForm: ["zustand", "react-hook-form"],
+			auth: ["next-auth"],
+			database: ["prisma"],
 			dryRun: true,
 		});
 		expect(result.success).toBe(true);
@@ -69,6 +73,70 @@ describe("ProjectContextSchema", () => {
 		const result = ProjectContextSchema.safeParse({
 			...validMinimal,
 			styling: ["bootstrap"],
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it("parses styling with lucide-react", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			styling: ["lucide-react"],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it("fails on stateForm with supabase (supabase removed from stateForm)", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			stateForm: ["supabase"],
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it("parses auth with next-auth", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			auth: ["next-auth"],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it("parses auth with empty array", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			auth: [],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it("fails on auth with invalid value", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			auth: ["clerk"],
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it("parses database with prisma", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			database: ["prisma"],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it("parses database with drizzle and supabase", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			database: ["drizzle", "supabase"],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it("fails on database with invalid value", () => {
+		const result = ProjectContextSchema.safeParse({
+			...validMinimal,
+			database: ["mongodb"],
 		});
 		expect(result.success).toBe(false);
 	});

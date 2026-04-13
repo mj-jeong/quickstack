@@ -12,7 +12,7 @@ interface EnvEntry {
 function collectEnvEntries(ctx: ProjectContext): EnvEntry[] {
 	const entries: EnvEntry[] = [];
 
-	if (ctx.stateForm.includes("supabase")) {
+	if (ctx.database.includes("supabase")) {
 		entries.push(
 			{ comment: "Supabase", key: "NEXT_PUBLIC_SUPABASE_URL", placeholder: "your-supabase-url" },
 			{
@@ -26,7 +26,7 @@ function collectEnvEntries(ctx: ProjectContext): EnvEntry[] {
 }
 
 export function shouldGenerateEnv(ctx: ProjectContext): boolean {
-	return ctx.stateForm.includes("supabase");
+	return ctx.database.includes("supabase");
 }
 
 export async function writeEnvExample(ctx: ProjectContext, projectDir: string): Promise<void> {

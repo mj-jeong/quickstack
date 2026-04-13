@@ -56,6 +56,8 @@ function makeCtx(overrides: Partial<ProjectContext> = {}): ProjectContext {
 		styling: [],
 		utilities: [],
 		stateForm: [],
+		auth: [],
+		database: [],
 		dryRun: false,
 		...overrides,
 	};
@@ -145,7 +147,7 @@ describe("pipeline integration (fixture-based)", () => {
 			const dir = stageFixture(FIXTURE_TAILWIND);
 			const ctx = makeCtx({
 				preset: "recommended",
-				stateForm: ["supabase"],
+				database: ["supabase"],
 			});
 
 			await runPipeline(ctx, dir);

@@ -67,6 +67,8 @@ export async function runPrompts(initialName?: string, dryRun?: boolean): Promis
 			styling: resolved.styling,
 			utilities: resolved.utilities,
 			stateForm: resolved.stateForm,
+			auth: [],
+			database: [],
 			dryRun: dryRun ?? false,
 		});
 
