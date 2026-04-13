@@ -6,14 +6,12 @@ export async function promptPreset(): Promise<"minimal" | "recommended"> {
 		default: "recommended",
 		choices: [
 			{
-				name: "minimal",
+				name: "minimal       — CNA 기본 구조 유지, 최소한의 추가만 포함",
 				value: "minimal",
-				description: "CNA default structure — minimal additions",
 			},
 			{
-				name: "recommended",
+				name: "recommended   — 실무 디렉토리 구조 (components, features, lib, hooks, styles, types)",
 				value: "recommended",
-				description: "Practical directory structure for real-world projects",
 			},
 		],
 	});

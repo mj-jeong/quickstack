@@ -11,6 +11,8 @@ function makeCtx(overrides: Partial<ProjectContext> = {}): ProjectContext {
 		styling: [],
 		utilities: [],
 		stateForm: [],
+		auth: [],
+		database: [],
 		dryRun: false,
 		...overrides,
 	};
