@@ -1,6 +1,6 @@
 {
 	"name": "quick-stack-tool",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Next.js project setup CLI with preset-based scaffolding and library integration",
 	"license": "MIT",
 	"repository": {
