@@ -7,6 +7,11 @@ function buildSummaryLines(ctx: Partial<ProjectContext>): string[] {
 
 	lines.push("");
 	lines.push(pc.bold("Project summary:"));
+	const modeLabel =
+		ctx.setupMode === "current-directory"
+			? "current directory"
+			: `new directory (./${ctx.projectName})`;
+	lines.push(`  Setup mode      : ${pc.cyan(modeLabel)}`);
 	lines.push(`  Project name    : ${pc.cyan(ctx.projectName ?? "(not set)")}`);
 	lines.push(`  Package manager : ${pc.cyan(ctx.packageManager ?? "(not set)")}`);
 	lines.push(`  Preset          : ${pc.cyan(ctx.preset ?? "(not set)")}`);

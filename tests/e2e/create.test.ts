@@ -36,12 +36,15 @@ describe.skipIf(!ENABLE_E2E)("E2E: create command with real CNA", () => {
 	it("creates a working project with recommended preset + tailwind", async () => {
 		const ctx: ProjectContext = {
 			projectName: "e2e-app",
+			setupMode: "new-directory",
 			framework: "nextjs",
 			packageManager: "pnpm",
 			preset: "recommended",
 			styling: ["tailwind"],
 			utilities: [],
 			stateForm: [],
+			auth: [],
+			database: [],
 			dryRun: false,
 		};
 

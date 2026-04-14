@@ -9,11 +9,14 @@ export const StateFormLib = z.enum(["zustand", "react-hook-form"]);
 export const AuthLib = z.enum(["next-auth"]);
 export const DatabaseLib = z.enum(["prisma", "drizzle", "supabase"]);
 
+export const SetupMode = z.enum(["new-directory", "current-directory"]);
+
 export const ProjectContextSchema = z.object({
 	projectName: z
 		.string()
 		.min(1)
 		.regex(/^[a-z0-9-]+$/),
+	setupMode: SetupMode,
 	framework: Framework,
 	packageManager: PackageManager,
 	preset: Preset,

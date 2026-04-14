@@ -4,6 +4,7 @@ import { renderReadme } from "../../src/generators/readme.js";
 
 const baseCtx: ProjectContext = {
 	projectName: "my-app",
+	setupMode: "new-directory",
 	framework: "nextjs",
 	packageManager: "pnpm",
 	preset: "minimal",

@@ -5,7 +5,7 @@ import { recommendedPreset } from "../../presets/next/recommended.js";
 export function buildCnaArgs(ctx: ProjectContext): string[] {
 	const preset = ctx.preset === "minimal" ? minimalPreset : recommendedPreset;
 
-	const args: string[] = [ctx.projectName];
+	const args: string[] = [ctx.setupMode === "current-directory" ? "." : ctx.projectName];
 
 	// TypeScript is always required
 	args.push("--ts");

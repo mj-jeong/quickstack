@@ -15,7 +15,7 @@ import {
 } from "../integrations/registry.js";
 import { minimalPreset } from "../presets/next/minimal.js";
 import { recommendedPreset } from "../presets/next/recommended.js";
-import { ensureDir } from "../utils/fs.js";
+import { ensureDir, patchJsonFile } from "../utils/fs.js";
 import { logger } from "../utils/logger.js";
 import type { ProjectContext } from "./context.js";
 import { PipelineError } from "./errors.js";
@@ -28,8 +28,11 @@ export interface PipelineAction {
 	packages?: string[];
 }
 
-async function runAdapter(ctx: ProjectContext): Promise<void> {
+async function runAdapter(ctx: ProjectContext, projectDir: string): Promise<void> {
 	await createNextApp(ctx);
+	// CNA가 "."으로 세팅하면 디렉토리명이 package.json name이 됨.
+	// 사용자가 입력한 projectName으로 덮어쓴다.
+	await patchJsonFile(join(projectDir, "package.json"), { name: ctx.projectName });
 }
 
 async function runPreset(ctx: ProjectContext, projectDir: string): Promise<void> {
@@ -70,11 +73,14 @@ async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise
 			logger.warn(`Integration "${id}" not found in registry — skipping.`);
 			continue;
 		}
+		const spinner = logger.spinner(`Installing ${integration.name}...`);
 		try {
 			await integration.setup(ctx, projectDir);
+			spinner.stop(`${integration.name}`);
 		} catch (err) {
 			// shadcn init is non-fatal: warn and continue.
 			if (id === "shadcn") {
+				spinner.fail(`${integration.name} — failed (non-fatal)`);
 				logger.warn(
 					`shadcn init failed — continuing without it. You can retry manually: npx shadcn@latest init --defaults`,
 				);
@@ -83,6 +89,7 @@ async function runIntegrations(ctx: ProjectContext, projectDir: string): Promise
 				}
 				continue;
 			}
+			spinner.fail(`${integration.name} — failed`);
 			throw new PipelineError(`Integration "${id}" setup failed`, { cause: err });
 		}
 	}
@@ -113,7 +120,9 @@ async function postProcess(ctx: ProjectContext, _projectDir: string): Promise<vo
 	console.log("");
 	console.log(pc.bold("Next steps:"));
 
-	console.log(`  ${pc.cyan(`cd ${projectName}`)}`);
+	if (ctx.setupMode === "new-directory") {
+		console.log(`  ${pc.cyan(`cd ${projectName}`)}`);
+	}
 
 	if (packageManager === "npm") {
 		console.log(`  ${pc.cyan("npm install")}`);
@@ -293,11 +302,13 @@ export async function runPipeline(ctx: ProjectContext, projectDir?: string): Pro
 		return;
 	}
 
-	const dir = projectDir ?? join(process.cwd(), ctx.projectName);
+	const dir =
+		projectDir ??
+		(ctx.setupMode === "current-directory" ? process.cwd() : join(process.cwd(), ctx.projectName));
 
 	if (!projectDir) {
 		try {
-			await runAdapter(ctx);
+			await runAdapter(ctx, dir);
 		} catch (err) {
 			if (err instanceof PipelineError) {
 				throw err;

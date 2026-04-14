@@ -1,3 +1,4 @@
+import { appendFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { exec } from "../../utils/exec.js";
 import { writeFileSafe } from "../../utils/fs.js";
@@ -31,7 +32,13 @@ const supabaseIntegration: Integration = {
 			cwd: projectDir,
 		});
 
-		await writeFileSafe(join(projectDir, ".env.example"), ENV_EXAMPLE_CONTENT);
+		const envExamplePath = join(projectDir, ".env.example");
+		try {
+			await readFile(envExamplePath, "utf-8");
+			await appendFile(envExamplePath, `\n${ENV_EXAMPLE_CONTENT}`);
+		} catch {
+			await writeFileSafe(envExamplePath, ENV_EXAMPLE_CONTENT);
+		}
 
 		await writeFileSafe(join(projectDir, "src/lib/supabase/client.ts"), CLIENT_TS_CONTENT);
 	},
