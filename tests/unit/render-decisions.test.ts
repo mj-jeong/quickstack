@@ -4,6 +4,7 @@ import { renderDecisions } from "../../src/generators/decisions.js";
 
 const baseCtx: ProjectContext = {
 	projectName: "my-app",
+	setupMode: "new-directory",
 	framework: "nextjs",
 	packageManager: "pnpm",
 	preset: "minimal",

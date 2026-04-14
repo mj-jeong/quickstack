@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Command } from "commander";
 import { PipelineError, QuickStackError, ValidationError } from "../../core/errors.js";
@@ -15,13 +15,21 @@ export function registerCreateCommand(program: Command): void {
 			try {
 				const ctx = await runPrompts(projectName, options.dryRun ?? false);
 
-				// Pre-flight: prevent overwriting existing directories (skip in dry-run).
 				if (!ctx.dryRun) {
-					const targetDir = join(process.cwd(), ctx.projectName);
-					if (existsSync(targetDir)) {
-						throw new ValidationError(
-							`Directory "${ctx.projectName}" already exists. Please pick a different name or remove the existing directory.`,
-						);
+					if (ctx.setupMode === "new-directory") {
+						const targetDir = join(process.cwd(), ctx.projectName);
+						if (existsSync(targetDir)) {
+							throw new ValidationError(
+								`Directory "${ctx.projectName}" already exists. Please pick a different name or remove the existing directory.`,
+							);
+						}
+					} else {
+						const entries = readdirSync(process.cwd()).filter((name) => !name.startsWith("."));
+						if (entries.length > 0) {
+							throw new ValidationError(
+								`Current directory is not empty. Run in an empty directory.\nFound: ${entries.slice(0, 5).join(", ")}${entries.length > 5 ? "..." : ""}`,
+							);
+						}
 					}
 				}
 
@@ -43,7 +51,6 @@ export function registerCreateCommand(program: Command): void {
 					process.exit(1);
 				}
 				if (err instanceof Error) {
-					// Unknown errors: surface enough context for debugging.
 					logger.error(err.message);
 					if (process.env.QUICKSTACK_DEBUG) {
 						console.error(err.stack);

@@ -15,6 +15,7 @@ import { renderReadme } from "../../src/generators/readme.js";
 
 const minimalContext: ProjectContext = {
 	projectName: "minimal-app",
+	setupMode: "new-directory",
 	framework: "nextjs",
 	packageManager: "pnpm",
 	preset: "minimal",
@@ -28,6 +29,7 @@ const minimalContext: ProjectContext = {
 
 const fullContext: ProjectContext = {
 	projectName: "full-app",
+	setupMode: "new-directory",
 	framework: "nextjs",
 	packageManager: "pnpm",
 	preset: "recommended",

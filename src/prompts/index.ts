@@ -6,6 +6,7 @@ import { promptDatabase } from "./database.js";
 import { promptPackageManager } from "./package-manager.js";
 import { promptPreset } from "./preset.js";
 import { promptProjectName } from "./project-name.js";
+import { promptSetupMode } from "./setup-mode.js";
 import { promptStateForm } from "./state-form.js";
 import { promptStyling } from "./styling.js";
 import { promptUtilities } from "./utilities.js";
@@ -43,7 +44,8 @@ export function resolveImplicitDeps(selections: {
 export async function runPrompts(initialName?: string, dryRun?: boolean): Promise<ProjectContext> {
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const projectName = await promptProjectName(initialName);
+		const setupMode = await promptSetupMode();
+		const projectName = await promptProjectName(setupMode, initialName);
 		const packageManager = await promptPackageManager();
 		const preset = await promptPreset();
 		const rawStyling = await promptStyling(preset);
@@ -70,6 +72,7 @@ export async function runPrompts(initialName?: string, dryRun?: boolean): Promis
 
 		const partial: Partial<ProjectContext> = {
 			projectName,
+			setupMode,
 			packageManager,
 			preset,
 			styling: resolved.styling as ProjectContext["styling"],
@@ -87,6 +90,7 @@ export async function runPrompts(initialName?: string, dryRun?: boolean): Promis
 
 		const ctx = ProjectContextSchema.parse({
 			projectName,
+			setupMode,
 			framework: "nextjs",
 			packageManager,
 			preset,

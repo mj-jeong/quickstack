@@ -5,6 +5,7 @@ import type { ProjectContext } from "../../src/core/context.js";
 function makeCtx(overrides: Partial<ProjectContext> = {}): ProjectContext {
 	return {
 		projectName: "my-app",
+		setupMode: "new-directory",
 		framework: "nextjs",
 		packageManager: "pnpm",
 		preset: "minimal",
@@ -29,9 +30,16 @@ describe("buildCnaArgs", () => {
 		expect(args).toContain("@/*");
 	});
 
-	it("includes project name as first argument", () => {
-		const args = buildCnaArgs(makeCtx({ projectName: "cool-project" }));
+	it("includes project name as first argument when setupMode is new-directory", () => {
+		const args = buildCnaArgs(makeCtx({ projectName: "cool-project", setupMode: "new-directory" }));
 		expect(args[0]).toBe("cool-project");
+	});
+
+	it('includes "." as first argument when setupMode is current-directory', () => {
+		const args = buildCnaArgs(
+			makeCtx({ projectName: "cool-project", setupMode: "current-directory" }),
+		);
+		expect(args[0]).toBe(".");
 	});
 
 	it("includes --no-tailwind when no styling is selected", () => {

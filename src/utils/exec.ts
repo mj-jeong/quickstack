@@ -17,6 +17,7 @@ export async function exec(
 			cwd: options?.cwd,
 			env: options?.env ? { ...process.env, ...options.env } : process.env,
 			stdio: ["inherit", "pipe", "pipe"],
+			shell: true,
 		});
 
 		let stdout = "";

@@ -50,6 +50,7 @@ const ANY_FIXTURE_EXISTS = FIXTURE_TAILWIND_EXISTS || FIXTURE_NO_TAILWIND_EXISTS
 function makeCtx(overrides: Partial<ProjectContext> = {}): ProjectContext {
 	return {
 		projectName: "test-app",
+		setupMode: "new-directory",
 		framework: "nextjs",
 		packageManager: "pnpm",
 		preset: "minimal",

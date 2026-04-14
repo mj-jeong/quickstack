@@ -3,6 +3,7 @@ import { ProjectContextSchema } from "../../src/core/context.js";
 
 const validMinimal = {
 	projectName: "my-app",
+	setupMode: "new-directory",
 	framework: "nextjs",
 	packageManager: "pnpm",
 	preset: "minimal",
@@ -22,6 +23,7 @@ describe("ProjectContextSchema", () => {
 	it("parses valid full input with all fields", () => {
 		const result = ProjectContextSchema.safeParse({
 			projectName: "my-app",
+			setupMode: "current-directory",
 			framework: "nextjs",
 			packageManager: "npm",
 			preset: "recommended",

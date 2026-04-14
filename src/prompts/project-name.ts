@@ -1,7 +1,11 @@
+import { basename } from "node:path";
 import { input } from "@inquirer/prompts";
 import { validateProjectName } from "../utils/validate.js";
 
-export async function promptProjectName(initial?: string): Promise<string> {
+export async function promptProjectName(
+	setupMode: "new-directory" | "current-directory",
+	initial?: string,
+): Promise<string> {
 	if (initial !== undefined) {
 		const result = validateProjectName(initial);
 		if (!result.valid) {
@@ -10,8 +14,13 @@ export async function promptProjectName(initial?: string): Promise<string> {
 		return initial;
 	}
 
+	const defaultName = setupMode === "current-directory" ? basename(process.cwd()) : undefined;
+	const message =
+		setupMode === "current-directory" ? "Project name (for package.json):" : "Project name:";
+
 	return input({
-		message: "Project name:",
+		message,
+		default: defaultName,
 		validate(value: string) {
 			const result = validateProjectName(value);
 			if (!result.valid) {
